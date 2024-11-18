@@ -34,7 +34,6 @@ public class auto extends LinearOpMode {
                 backRightDrive.setPower(0.1);
                 frontLeftDrive.setPower(-0.1);
                 backLeftDrive.setPower(-0.1);
-
             }
             else{
                 frontRightDrive.setPower(0);

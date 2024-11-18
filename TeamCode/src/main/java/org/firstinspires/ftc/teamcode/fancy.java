@@ -155,6 +155,7 @@ public class fancy extends LinearOpMode {
         backLeftDrive.setPower(-joyStick);
     }
 
+
     public void moveArm(float trigger, boolean bumper) {
         double maximumPosition = 3442;
         double minimumPosition = 0;

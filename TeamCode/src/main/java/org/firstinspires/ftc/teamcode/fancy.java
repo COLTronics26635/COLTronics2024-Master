@@ -37,6 +37,8 @@ public class fancy extends LinearOpMode {
     double left;
     double right;
 
+    boolean open = false;
+
     @Override
     public void runOpMode() {
         //color Sensor
@@ -69,6 +71,8 @@ public class fancy extends LinearOpMode {
         //Servos
         specimenGrabber = hardwareMap.get(Servo.class, "specimenGrabber");
         intakeServo = hardwareMap.get(CRServo.class, "Intake");
+
+
 
         //Telemetry
         telemetry.addData("Status", "Initialized");
@@ -103,6 +107,7 @@ public class fancy extends LinearOpMode {
             telemetry.addLine();
             telemetry.addData("\nhand pos", hand.getCurrentPosition());
             telemetry.addData("arm pos", mainArm.getCurrentPosition());
+            telemetry.addData("open", open);
             telemetry.update();
 
             //Get Joystick Values
@@ -116,14 +121,11 @@ public class fancy extends LinearOpMode {
                 takeIn(1);
             } else if (gamepad1.b) {
                 takeIn(-1);
+            } else if(!gamepad1.a && !gamepad1.b){
+                takeIn(0);
             }
 
             //Specimen Grabber
-            if (gamepad1.x) {
-                grabSpecimen(true);
-            } else if (gamepad1.y) {
-                grabSpecimen(false);
-            }
             //Arm
             moveArm(gamepad1.left_trigger, gamepad1.left_bumper);
             moveHand(gamepad1.right_trigger, gamepad1.right_bumper);
@@ -154,34 +156,41 @@ public class fancy extends LinearOpMode {
     }
 
     public void moveArm(float trigger, boolean bumper) {
-        double maximumPosition = 550;
+        double maximumPosition = 3442;
         double minimumPosition = 0;
-        if (bumper  && hand.getCurrentPosition() <= maximumPosition) {
+        if (bumper && mainArm.getCurrentPosition() <= 3442) {
             mainArm.setPower(1);
-        } else if (-trigger == 1  && hand.getCurrentPosition() >= minimumPosition) {
-            mainArm.setPower(-trigger);
+        } else if (trigger == 1 && mainArm.getCurrentPosition() >= 0) {
+            mainArm.setPower(-1);
+        } else {
+            mainArm.setPower(0);
         }
     }
 
     public void moveHand(float trigger, boolean bumper) {
-        double maximumPosition = 550;
-        double minimumPosition = 0;
-        if (bumper && hand.getCurrentPosition() <= maximumPosition) {
+        double maximumPosition = 4;
+        double minimumPosition = -25;
+        if (bumper && hand.getCurrentPosition() >= maximumPosition) {
+            hand.setPower(-1);
+        } else if (trigger == 1 && hand.getCurrentPosition() >= minimumPosition) {
             hand.setPower(1);
-        } else if (-trigger == 1 && hand.getCurrentPosition() >= minimumPosition) {
-            hand.setPower(-trigger);
+        } else {
+            hand.setPower(0);
         }
     }
     public void takeIn(double power) {
         intakeServo.setPower(power);
     }
-    public void grabSpecimen(boolean open) {
+    public void grabSpecimen() {
+
         double openPosition = 1;
         double closedPosition = 0;
         if (open) {
-            specimenGrabber.setPosition(openPosition);
-        } else {
             specimenGrabber.setPosition(closedPosition);
+            open = false;
+        } else if (!open) {
+            specimenGrabber.setPosition(openPosition);
+            open = true;
         }
 
     }

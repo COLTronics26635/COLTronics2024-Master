@@ -43,8 +43,6 @@ public class fancy extends LinearOpMode {
     public void runOpMode() {
         //color Sensor
         ColorSensor color = hardwareMap.get(ColorSensor.class, "colorV2");
-        //Voltage Sensor
-        VoltageSensor Voltage = hardwareMap.get(VoltageSensor.class, "Control Hub");
 
         //Initializing Motors:
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontLeft");
@@ -72,8 +70,6 @@ public class fancy extends LinearOpMode {
         specimenGrabber = hardwareMap.get(Servo.class, "specimenGrabber");
         intakeServo = hardwareMap.get(CRServo.class, "Intake");
 
-
-
         //Telemetry
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -93,8 +89,7 @@ public class fancy extends LinearOpMode {
             telemetry.addData("Green", color.green());
             telemetry.addData("Blue", color.blue());
             telemetry.addData("Alpha", color.alpha());
-            telemetry.addData("ARGB", color.argb());
-            telemetry.addData("Distance", ((DistanceSensor) color).getDistance(DistanceUnit.MM));
+            telemetry.addData("Distance (mm)", ((DistanceSensor) color).getDistance(DistanceUnit.MM));
             telemetry.addLine();
             telemetry.addData("IMU:\nYaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
             telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
@@ -102,8 +97,6 @@ public class fancy extends LinearOpMode {
             telemetry.addData("Yaw (Z) velocity", "%.2f Deg/Sec", angularVelocity.zRotationRate);
             telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
             telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
-            telemetry.addLine();
-            telemetry.addData("Voltage", Voltage.getVoltage());
             telemetry.addLine();
             telemetry.addData("\nhand pos", hand.getCurrentPosition());
             telemetry.addData("arm pos", mainArm.getCurrentPosition());
@@ -126,6 +119,7 @@ public class fancy extends LinearOpMode {
             }
 
             //Specimen Grabber
+            
             //Arm
             moveArm(gamepad1.left_trigger, gamepad1.left_bumper);
             moveHand(gamepad1.right_trigger, gamepad1.right_bumper);

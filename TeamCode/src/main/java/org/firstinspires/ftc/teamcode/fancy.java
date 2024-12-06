@@ -37,8 +37,6 @@ public class fancy extends LinearOpMode {
     double left;
     double right;
 
-    boolean open = false;
-
     @Override
     public void runOpMode() {
         //color Sensor
@@ -49,6 +47,9 @@ public class fancy extends LinearOpMode {
         frontLeftDrive = hardwareMap.get(DcMotor.class, "frontRight");
         backRightDrive = hardwareMap.get(DcMotor.class, "backLeft");
         backLeftDrive = hardwareMap.get(DcMotor.class, "backRight");
+
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
         mainArm = hardwareMap.get(DcMotor.class, "mainArm");
         hand = hardwareMap.get(DcMotor.class, "hand");
@@ -100,7 +101,6 @@ public class fancy extends LinearOpMode {
             telemetry.addLine();
             telemetry.addData("\nhand pos", hand.getCurrentPosition());
             telemetry.addData("arm pos", mainArm.getCurrentPosition());
-            telemetry.addData("open", open);
             telemetry.update();
 
             //Get Joystick Values
@@ -119,11 +119,14 @@ public class fancy extends LinearOpMode {
             }
 
             //Specimen Grabber
-            
-            //Arm
+            if (gamepad1.x) {
+                grabSpecimen();
+            }
+            //Arm Movement
             moveArm(gamepad1.left_trigger, gamepad1.left_bumper);
             moveHand(gamepad1.right_trigger, gamepad1.right_bumper);
-            //Movement
+
+            //Drive Train Movement
             if(left != 0) {
                 turn(left);
             } else {
@@ -137,16 +140,16 @@ public class fancy extends LinearOpMode {
         //Use Joystick value to move
         frontRightDrive.setPower(joyStick);
         backRightDrive.setPower(joyStick);
-        frontLeftDrive.setPower(-joyStick);
-        backLeftDrive.setPower(-joyStick);
+        frontLeftDrive.setPower(joyStick);
+        backLeftDrive.setPower(joyStick);
     }
 
     public void turn(double joyStick){
         //Use joystick value to turn
         frontRightDrive.setPower(-joyStick);
         backRightDrive.setPower(-joyStick);
-        frontLeftDrive.setPower(-joyStick);
-        backLeftDrive.setPower(-joyStick);
+        frontLeftDrive.setPower(joyStick);
+        backLeftDrive.setPower(joyStick);
     }
 
 
@@ -177,15 +180,13 @@ public class fancy extends LinearOpMode {
         intakeServo.setPower(power);
     }
     public void grabSpecimen() {
-
         double openPosition = 1;
         double closedPosition = 0;
-        if (open) {
+        
+        if (specimenGrabber.getPosition() >= 0.5) {
             specimenGrabber.setPosition(closedPosition);
-            open = false;
-        } else if (!open) {
+        } else if (specimenGrabber.getPosition() <= 0.5) {
             specimenGrabber.setPosition(openPosition);
-            open = true;
         }
 
     }

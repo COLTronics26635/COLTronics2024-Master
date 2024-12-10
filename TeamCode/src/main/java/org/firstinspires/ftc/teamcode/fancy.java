@@ -6,16 +6,9 @@ import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.hardware.VoltageSensor;
 import com.qualcomm.robotcore.hardware.DistanceSensor;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="Fancy", group="Ftc26635")
 public class fancy extends LinearOpMode {
@@ -60,13 +53,6 @@ public class fancy extends LinearOpMode {
         //Touch sensor
         TouchSensor touch = hardwareMap.get(TouchSensor.class, "touch");
 
-        //IMU
-        IMU imu = hardwareMap.get(IMU.class, "imu");
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
-        RevHubOrientationOnRobot.UsbFacingDirection usbDirection = RevHubOrientationOnRobot.UsbFacingDirection.UP;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-        imu.initialize(new IMU.Parameters(orientationOnRobot));
-
         //Servos
         specimenGrabber = hardwareMap.get(Servo.class, "specimenGrabber");
         intakeServo = hardwareMap.get(CRServo.class, "Intake");
@@ -78,9 +64,6 @@ public class fancy extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            YawPitchRollAngles orientation = imu.getRobotYawPitchRollAngles();
-            AngularVelocity angularVelocity = imu.getRobotAngularVelocity(AngleUnit.DEGREES);
-
             //Telemetry
             telemetry.addData("Status", "Running");
             telemetry.addLine();
@@ -90,14 +73,7 @@ public class fancy extends LinearOpMode {
             telemetry.addData("Green", color.green());
             telemetry.addData("Blue", color.blue());
             telemetry.addData("Alpha", color.alpha());
-            telemetry.addData("Distance (mm)", ((DistanceSensor) color).getDistance(DistanceUnit.MM));
-            telemetry.addLine();
-            telemetry.addData("IMU:\nYaw (Z)", "%.2f Deg. (Heading)", orientation.getYaw(AngleUnit.DEGREES));
-            telemetry.addData("Pitch (X)", "%.2f Deg.", orientation.getPitch(AngleUnit.DEGREES));
-            telemetry.addData("Roll (Y)", "%.2f Deg.", orientation.getRoll(AngleUnit.DEGREES));
-            telemetry.addData("Yaw (Z) velocity", "%.2f Deg/Sec", angularVelocity.zRotationRate);
-            telemetry.addData("Pitch (X) velocity", "%.2f Deg/Sec", angularVelocity.xRotationRate);
-            telemetry.addData("Roll (Y) velocity", "%.2f Deg/Sec", angularVelocity.yRotationRate);
+            //telemetry.addData("Distance (mm)", ((DistanceSensor) color).getDistance(DistanceUnit.MM));
             telemetry.addLine();
             telemetry.addData("\nhand pos", hand.getCurrentPosition());
             telemetry.addData("arm pos", mainArm.getCurrentPosition());
@@ -156,9 +132,9 @@ public class fancy extends LinearOpMode {
     public void moveArm(float trigger, boolean bumper) {
         double maximumPosition = 3442;
         double minimumPosition = 0;
-        if (bumper && mainArm.getCurrentPosition() <= 3442) {
+        if (bumper && mainArm.getCurrentPosition() <= maximumPosition) {
             mainArm.setPower(1);
-        } else if (trigger == 1 && mainArm.getCurrentPosition() >= 0) {
+        } else if (trigger == 1 && mainArm.getCurrentPosition() >= minimumPosition) {
             mainArm.setPower(-1);
         } else {
             mainArm.setPower(0);

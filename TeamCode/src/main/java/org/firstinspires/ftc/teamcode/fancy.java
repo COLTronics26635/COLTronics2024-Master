@@ -1,14 +1,18 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.hardware.bosch.BNO055IMU;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.hardware.TouchSensor;
-import com.qualcomm.robotcore.hardware.DistanceSensor;
+
+import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
+import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="Fancy", group="Ftc26635")
 public class fancy extends LinearOpMode {
@@ -25,6 +29,10 @@ public class fancy extends LinearOpMode {
     //Declare Servos
     CRServo intakeServo;
     Servo specimenGrabber;
+
+    //IMU
+    IMU imu1;
+    IMU imu2;
 
     //Declare joyStick values:
     double left;
@@ -57,6 +65,13 @@ public class fancy extends LinearOpMode {
         specimenGrabber = hardwareMap.get(Servo.class, "specimenGrabber");
         intakeServo = hardwareMap.get(CRServo.class, "Intake");
 
+        //IMU
+        imu1 = hardwareMap.get(IMU.class, "imu");
+        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
+        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
+        imu1.initialize(new IMU.Parameters(orientationOnRobot));
+
         //Telemetry
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -64,6 +79,9 @@ public class fancy extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
+            YawPitchRollAngles orientation = imu1.getRobotYawPitchRollAngles();
+            AngularVelocity angularVelocity = imu1.getRobotAngularVelocity(AngleUnit.DEGREES);
+
             //Telemetry
             telemetry.addData("Status", "Running");
             telemetry.addLine();
@@ -78,6 +96,7 @@ public class fancy extends LinearOpMode {
             telemetry.addData("\nhand pos", hand.getCurrentPosition());
             telemetry.addData("arm pos", mainArm.getCurrentPosition());
             telemetry.update();
+
 
             //Get Joystick Values
             left = -gamepad1.left_stick_x;

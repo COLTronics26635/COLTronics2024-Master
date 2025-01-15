@@ -29,7 +29,7 @@ public class auto extends LinearOpMode {
         waitForStart();
         //Move Forward for 4.5 feet
         while(opModeIsActive()){
-            if(getRuntime()<10){
+            if(getRuntime() < 10){
                 frontRightDrive.setPower(0.1);
                 backRightDrive.setPower(0.1);
                 frontLeftDrive.setPower(-0.1);

@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@TeleOp(name="Bare Bones", group="Ftc26635")
+@TeleOp(name="Bare Bones", group="Main")
 public class bareBones extends LinearOpMode {
 
     //Declare the motors:
@@ -67,6 +67,8 @@ public class bareBones extends LinearOpMode {
                 takeIn(1);
             } else if (gamepad1.b) {
                 takeIn(-1);
+            } else {
+                takeIn(0);
             }
 
             //Specimen Grabber

@@ -43,17 +43,17 @@ public class imu9 extends LinearOpMode {
 
             telemetry.addData("Status", "Running");
             telemetry.addLine();
-            telemetry.addData("Heading (Z)", angles.firstAngle);
+            telemetry.addData("Heading (Z) (Foward/Backward)", angles.firstAngle);
             telemetry.addData("Roll (Y)", angles.secondAngle);
             telemetry.addData("Pitch (X)", angles.thirdAngle);
             telemetry.addLine();
             telemetry.addData("Gyro X (°/s)", velocity.xRotationRate);
             telemetry.addData("Gyro Y (°/s)", velocity.yRotationRate);
-            telemetry.addData("Gyro Z (°/s)", velocity.zRotationRate);
+            telemetry.addData("Gyro Z (°/s) (Foward/Backward)", velocity.zRotationRate);
             telemetry.addLine();
             telemetry.addData("Magnetometer X (µT)", magnet.x);
             telemetry.addData("Magnetometer Y (µT)", magnet.y);
-            telemetry.addData("Magnetometer Z (µT)", magnet.z);
+            telemetry.addData("Magnetometer Z (µT) (Foward/Backward)", magnet.z);
             telemetry.update();
         }
     }

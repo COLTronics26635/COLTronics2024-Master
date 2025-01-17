@@ -1,18 +1,10 @@
 package org.firstinspires.ftc.teamcode;
 
-import com.qualcomm.hardware.bosch.BNO055IMU;
-import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.CRServo;
-import com.qualcomm.robotcore.hardware.ColorSensor;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.IMU;
 import com.qualcomm.robotcore.hardware.Servo;
-import com.qualcomm.robotcore.hardware.TouchSensor;
-
-import org.firstinspires.ftc.robotcore.external.navigation.AngularVelocity;
-import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 @TeleOp(name="Fancy", group="Ftc26635")
 public class fancy extends LinearOpMode {
@@ -30,9 +22,6 @@ public class fancy extends LinearOpMode {
     CRServo intakeServo;
     Servo specimenGrabber;
 
-    //IMU
-    IMU imu1;
-    IMU imu2;
 
     //Declare joyStick values:
     double left;
@@ -40,8 +29,6 @@ public class fancy extends LinearOpMode {
 
     @Override
     public void runOpMode() {
-        //color Sensor
-        ColorSensor color = hardwareMap.get(ColorSensor.class, "colorV2");
 
         //Initializing Motors:
         frontRightDrive = hardwareMap.get(DcMotor.class, "frontLeft");
@@ -58,19 +45,9 @@ public class fancy extends LinearOpMode {
         mainArm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hand.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
 
-        //Touch sensor
-        TouchSensor touch = hardwareMap.get(TouchSensor.class, "touch");
-
         //Servos
         specimenGrabber = hardwareMap.get(Servo.class, "specimenGrabber");
         intakeServo = hardwareMap.get(CRServo.class, "Intake");
-
-        //IMU
-        imu1 = hardwareMap.get(IMU.class, "imu");
-        RevHubOrientationOnRobot.LogoFacingDirection logoDirection = RevHubOrientationOnRobot.LogoFacingDirection.UP;
-        RevHubOrientationOnRobot.UsbFacingDirection  usbDirection  = RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
-        RevHubOrientationOnRobot orientationOnRobot = new RevHubOrientationOnRobot(logoDirection, usbDirection);
-        imu1.initialize(new IMU.Parameters(orientationOnRobot));
 
         //Telemetry
         telemetry.addData("Status", "Initialized");
@@ -79,20 +56,13 @@ public class fancy extends LinearOpMode {
         waitForStart();
 
         while (opModeIsActive()) {
-            YawPitchRollAngles orientation = imu1.getRobotYawPitchRollAngles();
-            AngularVelocity angularVelocity = imu1.getRobotAngularVelocity(AngleUnit.DEGREES);
 
             //Telemetry
             telemetry.addData("Status", "Running");
             telemetry.addLine();
-            telemetry.addData("Touch:\nPressed?", touch.isPressed());
-            telemetry.addLine();
-            telemetry.addData("Color:\nRed", color.red());
-            telemetry.addData("Green", color.green());
-            telemetry.addData("Blue", color.blue());
-            telemetry.addData("Alpha", color.alpha());
-            //telemetry.addData("Distance (mm)", ((DistanceSensor) color).getDistance(DistanceUnit.MM));
-            telemetry.addLine();
+            telemetry.addData("grabber pos", specimenGrabber.getPosition());
+            telemetry.addData("x", gamepad1.x);
+            telemetry.addData("y", gamepad1.y);
             telemetry.addData("\nhand pos", hand.getCurrentPosition());
             telemetry.addData("arm pos", mainArm.getCurrentPosition());
             telemetry.update();
@@ -115,7 +85,9 @@ public class fancy extends LinearOpMode {
 
             //Specimen Grabber
             if (gamepad1.x) {
-                grabSpecimen();
+                grabSpecimen(true);
+            } else if (gamepad1.y) {
+                grabSpecimen(false);
             }
             //Arm Movement
             moveArm(gamepad1.left_trigger, gamepad1.left_bumper);
@@ -149,24 +121,24 @@ public class fancy extends LinearOpMode {
 
 
     public void moveArm(float trigger, boolean bumper) {
-        double maximumPosition = 3442;
-        double minimumPosition = 0;
-        if (bumper && mainArm.getCurrentPosition() <= maximumPosition) {
-            mainArm.setPower(1);
-        } else if (trigger == 1 && mainArm.getCurrentPosition() >= minimumPosition) {
+        double maximumPosition = -2552;
+        double minimumPosition = 135;
+        if (bumper) {
             mainArm.setPower(-1);
+        } else if (trigger == 1) {
+            mainArm.setPower(1);
         } else {
             mainArm.setPower(0);
         }
     }
 
     public void moveHand(float trigger, boolean bumper) {
-        double maximumPosition = 4;
-        double minimumPosition = -25;
-        if (bumper && hand.getCurrentPosition() >= maximumPosition) {
-            hand.setPower(-1);
-        } else if (trigger == 1 && hand.getCurrentPosition() >= minimumPosition) {
+        double maximumPosition = 10;
+        double minimumPosition = -271;
+        if (bumper) {
             hand.setPower(1);
+        } else if (trigger == 1) {
+            hand.setPower(-1);
         } else {
             hand.setPower(0);
         }
@@ -174,14 +146,11 @@ public class fancy extends LinearOpMode {
     public void takeIn(double power) {
         intakeServo.setPower(power);
     }
-    public void grabSpecimen() {
-        double openPosition = 1;
-        double closedPosition = 0;
-        
-        if (specimenGrabber.getPosition() >= 0.5) {
-            specimenGrabber.setPosition(closedPosition);
-        } else if (specimenGrabber.getPosition() <= 0.5) {
-            specimenGrabber.setPosition(openPosition);
+    public void grabSpecimen(boolean open) {
+        if (open) {
+            specimenGrabber.setPosition(1);
+        } else if (!open) {
+            specimenGrabber.setPosition(0);
         }
 
     }

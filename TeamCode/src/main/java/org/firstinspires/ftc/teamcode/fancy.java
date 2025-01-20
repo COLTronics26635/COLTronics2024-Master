@@ -27,6 +27,8 @@ public class fancy extends LinearOpMode {
     double left;
     double right;
 
+    boolean open;
+
     @Override
     public void runOpMode() {
 
@@ -49,6 +51,9 @@ public class fancy extends LinearOpMode {
         specimenGrabber = hardwareMap.get(Servo.class, "specimenGrabber");
         intakeServo = hardwareMap.get(CRServo.class, "Intake");
 
+        //specimenGrabber.setPosition(1);
+        open = false;
+
         //Telemetry
         telemetry.addData("Status", "Initialized");
         telemetry.update();
@@ -60,11 +65,10 @@ public class fancy extends LinearOpMode {
             //Telemetry
             telemetry.addData("Status", "Running");
             telemetry.addLine();
-            telemetry.addData("grabber pos", specimenGrabber.getPosition());
-            telemetry.addData("x", gamepad1.x);
-            telemetry.addData("y", gamepad1.y);
-            telemetry.addData("\nhand pos", hand.getCurrentPosition());
+            telemetry.addData("Right Trigger", gamepad1.right_trigger);
+            telemetry.addData("hand pos", hand.getCurrentPosition());
             telemetry.addData("arm pos", mainArm.getCurrentPosition());
+            telemetry.addData("Specimen Grabber Pos", specimenGrabber.getPosition());
             telemetry.update();
 
 
@@ -85,21 +89,17 @@ public class fancy extends LinearOpMode {
 
             //Specimen Grabber
             if (gamepad1.x) {
-                grabSpecimen(true);
-            } else if (gamepad1.y) {
-                grabSpecimen(false);
+                grabSpecimen();
             }
             //Arm Movement
             moveArm(gamepad1.left_trigger, gamepad1.left_bumper);
             moveHand(gamepad1.right_trigger, gamepad1.right_bumper);
-
             //Drive Train Movement
             if(left != 0) {
                 turn(left);
             } else {
                 moveForward(right);
             }
-
         }
     }
 
@@ -110,7 +110,6 @@ public class fancy extends LinearOpMode {
         frontLeftDrive.setPower(joyStick);
         backLeftDrive.setPower(joyStick);
     }
-
     public void turn(double joyStick){
         //Use joystick value to turn
         frontRightDrive.setPower(-joyStick);
@@ -121,12 +120,12 @@ public class fancy extends LinearOpMode {
 
 
     public void moveArm(float trigger, boolean bumper) {
-        double maximumPosition = -2552;
-        double minimumPosition = 135;
+        double maximumPosition = -2300;
+        double minimumPosition = 74;
         if (bumper) {
             mainArm.setPower(-1);
-        } else if (trigger == 1) {
-            mainArm.setPower(1);
+        } else if (trigger > 0) {
+            mainArm.setPower(trigger);
         } else {
             mainArm.setPower(0);
         }
@@ -134,11 +133,11 @@ public class fancy extends LinearOpMode {
 
     public void moveHand(float trigger, boolean bumper) {
         double maximumPosition = 10;
-        double minimumPosition = -271;
-        if (bumper) {
+        double minimumPosition = -335;
+        if (bumper && hand.getCurrentPosition() < maximumPosition) {
             hand.setPower(1);
-        } else if (trigger == 1) {
-            hand.setPower(-1);
+        } else if (trigger > 0 && hand.getCurrentPosition() > minimumPosition) {
+            hand.setPower(-trigger);
         } else {
             hand.setPower(0);
         }
@@ -146,12 +145,18 @@ public class fancy extends LinearOpMode {
     public void takeIn(double power) {
         intakeServo.setPower(power);
     }
-    public void grabSpecimen(boolean open) {
+    public void grabSpecimen() {
         if (open) {
-            specimenGrabber.setPosition(1);
+            specimenGrabber.setPosition(0.3);
+            open = false;
         } else if (!open) {
-            specimenGrabber.setPosition(0);
+            specimenGrabber.setPosition(0.4);
+            open = true;
         }
-
+        try {
+            Thread.sleep(200);
+        } catch (InterruptedException ex) {
+            Thread.currentThread().interrupt();
+        }
     }
 }

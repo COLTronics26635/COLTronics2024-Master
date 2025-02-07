@@ -1,14 +1,15 @@
 package org.firstinspires.ftc.teamcode;
 
+import com.qualcomm.robotcore.eventloop.opmode.Disabled;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 import com.qualcomm.robotcore.hardware.DcMotor;
-import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="bareBones")
-public class bareBones extends LinearOpMode {
+@Disabled
+@TeleOp(name="driver27")
+public class driver2 extends LinearOpMode {
 
     //Declare the motors:
     DcMotor frontRightDrive;
@@ -45,14 +46,12 @@ public class bareBones extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "backLeft");
         backLeftDrive = hardwareMap.get(DcMotor.class, "backRight");
 
-        frontLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
-        backLeftDrive.setDirection(DcMotorSimple.Direction.REVERSE);
+        backLeftDrive.setDirection(DcMotor.Direction.REVERSE);
+        frontLeftDrive.setDirection(DcMotor.Direction.REVERSE);
 
         arm = hardwareMap.get(DcMotor.class, "arm");
         hand = hardwareMap.get(DcMotor.class, "hand");
         intake = hardwareMap.get(DcMotor.class, "intake");
-
-        hand.setDirection(DcMotorSimple.Direction.REVERSE);
 
         arm.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
         hand.setZeroPowerBehavior(DcMotor.ZeroPowerBehavior.BRAKE);
@@ -68,8 +67,8 @@ public class bareBones extends LinearOpMode {
 
         armMin = arm.getCurrentPosition();
         armMax = armMin - 2639;
-        handMin = 310;
-        handMax = -12;
+        handMin = hand.getCurrentPosition();
+        handMax = handMin - 332;
 
         waitForStart();
 
@@ -90,25 +89,25 @@ public class bareBones extends LinearOpMode {
 
 
             //Intake
-            if (gamepad1.a) {
+            if (gamepad2.a) {
                 takeIn(1);
-            } else if (gamepad1.b) {
+            } else if (gamepad2.b) {
                 takeIn(-1);
-            } else if(!gamepad1.a && !gamepad1.b){
+            } else if(!gamepad2.a && !gamepad2.b){
                 takeIn(0);
             }
 
             //Specimen Grabber
-            if (gamepad1.x) {
+            if (gamepad2.x) {
                 grabSpecimen();
             }
 
             //Arm Movement
-            moveArm(gamepad1.left_trigger, gamepad1.left_bumper);
-            moveHand(gamepad1.right_trigger, gamepad1.right_bumper);
+            moveArm(gamepad2.left_stick_y);
+            moveHand(gamepad2.right_stick_y);
 
             //Drive Train Movement
-            move(right, -left);
+            move(right, left);
 
         }
     }
@@ -118,31 +117,19 @@ public class bareBones extends LinearOpMode {
         double left = Range.clip(-vertical - horizontal, -1, 1);
         double right = Range.clip(-vertical + horizontal, -1, 1);
 
-        frontLeftDrive.setPower(left);
-        backLeftDrive.setPower(left);
-        frontRightDrive.setPower(right);
-        backRightDrive.setPower(right);
+        frontLeftDrive.setPower(-left);
+        backLeftDrive.setPower(-left);
+        frontRightDrive.setPower(-right);
+        backRightDrive.setPower(-right);
     }
 
 
-    public void moveArm(float trigger, boolean bumper) {
-        if (bumper && arm.getCurrentPosition() > armMax) {
-            arm.setPower(-1);
-        } else if (trigger > 0 && arm.getCurrentPosition() < armMin) {
-            arm.setPower(trigger);
-        } else {
-            arm.setPower(0);
-        }
+    public void moveArm(float y) {
+        arm.setPower(y);
     }
 
-    public void moveHand(float trigger, boolean bumper) {
-        if (bumper) {
-            hand.setPower(-1);
-        } else if (trigger > 0) {
-            hand.setPower(trigger);
-        } else {
-            hand.setPower(0);
-        }
+    public void moveHand(float y) {
+        hand.setPower(y);
     }
     public void takeIn(double power) {
         intake.setPower(-power);

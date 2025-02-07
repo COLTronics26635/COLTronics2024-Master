@@ -4,6 +4,7 @@ package org.firstinspires.ftc.teamcode;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
+import com.qualcomm.robotcore.hardware.Servo;
 
 @Autonomous(name="George")
 public class auto extends LinearOpMode {
@@ -15,7 +16,7 @@ public class auto extends LinearOpMode {
     DcMotor backRightDrive;
     DcMotor backLeftDrive;
 
-
+    Servo specimenGrabber;
 
     @Override
     public void runOpMode() {
@@ -25,23 +26,41 @@ public class auto extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "backLeft");
         backLeftDrive = hardwareMap.get(DcMotor.class, "backRight");
 
+        specimenGrabber = hardwareMap.get(Servo.class, "specimenGrabber");
 
         waitForStart();
-        //Move Forward for 4.5 feet
-        while(opModeIsActive()){
-            if(getRuntime()<10){
-                frontRightDrive.setPower(0.1);
-                backRightDrive.setPower(0.1);
-                frontLeftDrive.setPower(-0.1);
-                backLeftDrive.setPower(-0.1);
+
+        while(opModeIsActive()) {
+            telemetry.addData("Time", getRuntime());
+            telemetry.update();
+
+            if(getRuntime() < 15.5){
+                frontRightDrive.setPower(-0.1);
+                backRightDrive.setPower(-0.1);
+                frontLeftDrive.setPower(0.1);
+                backLeftDrive.setPower(0.1);
             }
-            else{
+            if (getRuntime() > 15) {
+                specimenGrabber.setPosition(0.65);
+            }
+            if (getRuntime() > 16 && getRuntime() < 17) {
+                frontRightDrive.setPower(1);
+                backRightDrive.setPower(1);
+                frontLeftDrive.setPower(-1);
+                backLeftDrive.setPower(-1);
+            }
+            if (getRuntime() > 17) {
                 frontRightDrive.setPower(0);
                 backRightDrive.setPower(0);
                 frontLeftDrive.setPower(0);
                 backLeftDrive.setPower(0);
             }
 
+
         }
+    }
+
+    public void moveDistance(double distance) {
+
     }
 }

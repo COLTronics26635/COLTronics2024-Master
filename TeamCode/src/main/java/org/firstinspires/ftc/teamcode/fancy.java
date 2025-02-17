@@ -25,7 +25,7 @@ import org.firstinspires.ftc.robotcore.external.navigation.Velocity;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
 import java.util.Locale;
-@Disabled
+
 @TeleOp(name="Fancy")
 public class fancy extends LinearOpMode {
 

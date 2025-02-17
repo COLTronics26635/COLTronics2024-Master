@@ -7,8 +7,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-@Disabled
-@TeleOp(name="driver27")
+@TeleOp(name="2 Drivers")
 public class driver2 extends LinearOpMode {
 
     //Declare the motors:
@@ -66,23 +65,19 @@ public class driver2 extends LinearOpMode {
         telemetry.update();
 
         armMin = arm.getCurrentPosition();
-        armMax = armMin - 2639;
-        handMin = hand.getCurrentPosition();
-        handMax = handMin - 332;
+        armMax = armMin - 1932;
 
         waitForStart();
 
         while (opModeIsActive()) {
             //Get Joystick Values
             left = -gamepad1.left_stick_x;
-            right = gamepad1.right_stick_y;
+            right = -gamepad1.right_stick_y;
 
 
             //Telemetry
             telemetry.addData("Status", "Running");
-            telemetry.addData("Hand", hand.getCurrentPosition());
-            telemetry.addData("Min", handMin);
-            telemetry.addData("Max", handMax);
+            telemetry.addData("Arm", arm.getCurrentPosition());
             telemetry.addData("left", left);
             telemetry.addData("right", right);
             telemetry.update();
@@ -125,7 +120,15 @@ public class driver2 extends LinearOpMode {
 
 
     public void moveArm(float y) {
-        arm.setPower(y);
+        if (y < 0 && arm.getCurrentPosition() > armMax) {
+            arm.setPower(y);
+        } else if (y > 0 && arm.getCurrentPosition() < armMin) {
+            arm.setPower(y);
+        } else {
+            arm.setPower(0);
+        }
+
+
     }
 
     public void moveHand(float y) {

@@ -89,7 +89,7 @@ public class fancy extends LinearOpMode {
         BNO055IMU.Parameters parameters = new BNO055IMU.Parameters();
         parameters.angleUnit           = BNO055IMU.AngleUnit.DEGREES;
         parameters.accelUnit           = BNO055IMU.AccelUnit.METERS_PERSEC_PERSEC;
-        parameters.temperatureUnit     = BNO055IMU.TempUnit.FARENHEIT;
+        parameters.temperatureUnit     = BNO055IMU.TempUnit.CELSIUS;
         parameters.calibrationDataFile = "BNO055IMUCalibration.json"; // see the calibration sample OpMode
         parameters.loggingEnabled      = true;
         parameters.loggingTag          = "IMU2";
@@ -128,10 +128,11 @@ public class fancy extends LinearOpMode {
             telemetry.addData("Color:\nRed", color.red());
             telemetry.addData("Green", color.green());
             telemetry.addData("Blue", color.blue());
+            telemetry.addData("Proximity (Alpha)", color.alpha());
             telemetry.addLine();
             telemetry.addData("Touch:\ntouch", touch.isPressed());
             telemetry.addLine();
-            telemetry.addData("Temp (℉)", imu2.getTemperature());
+            telemetry.addData("Temp (℃)", imu2.getTemperature());
             telemetry.update();
 
             //Intake

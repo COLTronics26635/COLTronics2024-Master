@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 import com.qualcomm.robotcore.util.Range;
 
-@TeleOp(name="2 Drivers")
+@TeleOp(name="2 Drivers", group = "main")
 public class driver2 extends LinearOpMode {
 
     //Declare the motors:
@@ -23,16 +23,9 @@ public class driver2 extends LinearOpMode {
     Servo specimenGrabber;
 
 
-    //Declare joyStick values:
-    double left;
-    double right;
-
     boolean open;
-
     double armMin;
     double armMax;
-    double handMin;
-    double handMax;
 
 
     @Override
@@ -58,27 +51,21 @@ public class driver2 extends LinearOpMode {
         specimenGrabber = hardwareMap.get(Servo.class, "specimenGrabber");
 
         open = false;
+        armMin = arm.getCurrentPosition();
+        armMax = armMin - 1932;
 
         //Telemetry
         telemetry.addData("Status", "Initialized");
         telemetry.update();
 
-        armMin = arm.getCurrentPosition();
-        armMax = armMin - 1932;
+
 
         waitForStart();
 
         while (opModeIsActive()) {
-            //Get Joystick Values
-            left = -gamepad1.left_stick_x;
-            right = -gamepad1.right_stick_y;
-
 
             //Telemetry
             telemetry.addData("Status", "Running");
-            telemetry.addData("Arm", arm.getCurrentPosition());
-            telemetry.addData("left", left);
-            telemetry.addData("right", right);
             telemetry.update();
 
 
@@ -101,7 +88,7 @@ public class driver2 extends LinearOpMode {
             moveHand(gamepad2.right_stick_y);
 
             //Drive Train Movement
-            move(right, left);
+            move(gamepad1.right_stick_y, gamepad1.left_stick_x);
 
         }
     }
@@ -111,10 +98,10 @@ public class driver2 extends LinearOpMode {
         double left = Range.clip(-vertical - horizontal, -1, 1);
         double right = Range.clip(-vertical + horizontal, -1, 1);
 
-        frontLeftDrive.setPower(-left);
-        backLeftDrive.setPower(-left);
-        frontRightDrive.setPower(-right);
-        backRightDrive.setPower(-right);
+        frontLeftDrive.setPower(left);
+        backLeftDrive.setPower(left);
+        frontRightDrive.setPower(right);
+        backRightDrive.setPower(right);
     }
 
 
@@ -126,8 +113,6 @@ public class driver2 extends LinearOpMode {
         } else {
             arm.setPower(0);
         }
-
-
     }
 
     public void moveHand(float y) {
@@ -139,11 +124,10 @@ public class driver2 extends LinearOpMode {
     public void grabSpecimen() {
         if (open) {
             specimenGrabber.setPosition(0.8);
-            open = false;
-        } else if (!open) {
+        } else {
             specimenGrabber.setPosition(0.65);
-            open = true;
         }
+        open = !open;
         delay(200);
     }
     public void delay(long millis) {

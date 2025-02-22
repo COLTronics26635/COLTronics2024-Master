@@ -6,7 +6,7 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Servo;
 
-@Autonomous(name="George-Left-Park")
+@Autonomous(name="George-L-Park", group = "left")
 public class autoLeft2 extends LinearOpMode {
 
 

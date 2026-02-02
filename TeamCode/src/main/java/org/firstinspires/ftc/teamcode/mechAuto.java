@@ -4,8 +4,8 @@ import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.hardware.DcMotor;
 
-@Autonomous(name="Auto")
-public class auto extends LinearOpMode {
+@Autonomous(name="Mech")
+public class mechAuto extends LinearOpMode {
     //Declare the motors:
     DcMotor frontRightDrive;
     DcMotor frontLeftDrive;
@@ -26,10 +26,10 @@ public class auto extends LinearOpMode {
 
         while (opModeIsActive()) {
             if (getRuntime() < 4) {
-                frontLeftDrive.setPower(-0.3);
-                frontRightDrive.setPower(-0.3);
-                backRightDrive.setPower(-0.3);
-                backLeftDrive.setPower(-0.3);
+                frontLeftDrive.setPower(1);
+                frontRightDrive.setPower(-1);
+                backRightDrive.setPower(1);
+                backLeftDrive.setPower(-1);
             } else {
                 frontLeftDrive.setPower(0);
                 frontRightDrive.setPower(0);
@@ -39,3 +39,7 @@ public class auto extends LinearOpMode {
         }
     }
 }
+//back right
+//front right
+//back left
+//front left

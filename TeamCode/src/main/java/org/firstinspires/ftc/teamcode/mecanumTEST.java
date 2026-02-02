@@ -21,6 +21,9 @@ public class mecanumTEST extends LinearOpMode {
         backRightDrive = hardwareMap.get(DcMotor.class, "backLeft");
         backLeftDrive = hardwareMap.get(DcMotor.class, "backRight");
 
+        frontRightDrive.setDirection(DcMotor.Direction.REVERSE);
+        backRightDrive.setDirection(DcMotor.Direction.REVERSE);
+
         //Telemetry
         telemetry.addData("Status", "Initialized");
         telemetry.update();

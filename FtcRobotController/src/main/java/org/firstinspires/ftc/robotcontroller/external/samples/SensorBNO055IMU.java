@@ -157,7 +157,7 @@ public class SensorBNO055IMU extends LinearOpMode
                 });
 
         telemetry.addLine()
-            .addData("gravity", new Func<String>() {
+            .addData("grvty", new Func<String>() {
                 @Override public String value() {
                     return gravity.toString();
                     }
